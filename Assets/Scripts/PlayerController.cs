@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 namespace AGDDPlatformer
 {
@@ -17,7 +18,9 @@ namespace AGDDPlatformer
         public float dashCooldown;
         public Color canDashColor;
         public Color cantDashColor;
+        public Color FlyColour;
         public Color ForceColor;
+        public Color ControlColor;
         float lastDashTime;
         Vector2 dashDirection;
         public bool isDashing;
@@ -26,7 +29,8 @@ namespace AGDDPlatformer
 
         [Header("Abilities")]
         public bool ForceActive;
-
+        public bool FlyActive;
+        public bool Contolling; 
 
         [Header("Audio")]
         public AudioSource source;
@@ -89,12 +93,14 @@ namespace AGDDPlatformer
             Vector2 desiredDashDirection = new Vector2(
                 move.x == 0 ? 0 : (move.x > 0 ? 1 : -1),
                 move.y == 0 ? 0 : (move.y > 0 ? 1 : -1));
+            
             if (desiredDashDirection == Vector2.zero)
             {
                 // Dash in facing direction if there is no directional input;
                 desiredDashDirection = spriteRenderer.flipX ? -Vector2.right : Vector2.right;
             }
             desiredDashDirection = desiredDashDirection.normalized;
+
             if (Input.GetButtonDown("Dash"))
             {
                 wantsToDash = true;
@@ -102,13 +108,18 @@ namespace AGDDPlatformer
 
             /* --- Compute Velocity --- */
 
-            if (canDash && wantsToDash)
+            if (canDash && wantsToDash && !Contolling)
             {
                 isDashing = true;
                 dashDirection = desiredDashDirection;
                 lastDashTime = Time.time;
                 canDash = false;
                 gravityModifier = 0;
+
+                if (FlyActive)
+                {
+                    canDash = true;
+                }
 
                 source.PlayOneShot(dashSound);
             }
@@ -165,7 +176,10 @@ namespace AGDDPlatformer
                     jumpReleased = false;
                 }
 
-                velocity.x = move.x * maxSpeed;
+                if (!Contolling)
+                {
+                    velocity.x = move.x * maxSpeed;
+                }
 
                 if (isGrounded || (velocity + jumpBoost).magnitude < velocity.magnitude)
                 {
@@ -190,9 +204,17 @@ namespace AGDDPlatformer
                 spriteRenderer.flipX = true;
             }
 
-            if (ForceActive)
+            if (Contolling)
+            {
+                spriteRenderer.color = ControlColor;
+            }
+            else if (ForceActive)
             {
                 spriteRenderer.color = canDash ? ForceColor : cantDashColor;
+            }
+            else if (FlyActive)
+            {
+                spriteRenderer.color = canDash ? FlyColour : cantDashColor;
             }
             else
             {
@@ -218,6 +240,23 @@ namespace AGDDPlatformer
         public void SetForceActive()
         {
             ForceActive = true;
+        }
+
+        public void SetFlyActive()
+        {
+            FlyActive = true;
+            StartCoroutine(DisableFlyAfterSeconds(3));
+        }
+
+        public void toggleControl()
+        {
+            Contolling = !Contolling;
+        }
+
+        private IEnumerator DisableFlyAfterSeconds(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            FlyActive = false;
         }
 
         //Add a short mid-air boost to the player (unrelated to dash). Will be reset upon landing.
