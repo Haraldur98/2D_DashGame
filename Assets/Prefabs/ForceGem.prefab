@@ -487,8 +487,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeIndicator: {fileID: 4758919338054275725}
-  cooldown: 2
-  source: {fileID: 0}
+  cooldown: 4
+  source: {fileID: 7462683631213845757}
 --- !u!61 &4758919339370506859
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -525,10 +525,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0a22540611d2d1845b0f0dcc70812078, type: 3}
+  m_audioClip: {fileID: 8300000, guid: cc6699269b4c1d44ea1e860518b9bb73, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 0.48
   Loop: 0
   Mute: 0
   Spatialize: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AGDDPlatformer
 {
     public class ExplodeObject : MonoBehaviour
-    {
+    {   
         private Explodable _explodable;
         private PlayerController player1; // Reference to the player script
 
@@ -35,9 +35,11 @@ namespace AGDDPlatformer
                 if (player1.ForceActive == true && player1.isDashing == true)
                 {
                     Debug.Log("Player collided with explodable object");
+                    player1.source.PlayOneShot(player1.brakeSound);
                     _explodable.explode();
                     ExplosionForce ef = GameObject.FindObjectOfType<ExplosionForce>();
                     ef.doExplosion(transform.position);
+
                 }
             }
         }

@@ -36,6 +36,7 @@ namespace AGDDPlatformer
         public AudioSource source;
         public AudioClip jumpSound;
         public AudioClip dashSound;
+        public AudioClip brakeSound;
 
         Vector2 startPosition;
         bool startOrientation;
