@@ -12,6 +12,8 @@ namespace AGDDPlatformer
         public List<Transform> controlBlocks;
         public int currentBlockIndex = 0;
 
+        public GameObject activeIndicator;
+
         private bool isActivated = false;
 
         void Start()
@@ -22,6 +24,7 @@ namespace AGDDPlatformer
             {
                 controlBlocks.Add(child);
             }
+            activeIndicator.SetActive(false);
         }
 
         void Update()
@@ -49,6 +52,8 @@ namespace AGDDPlatformer
                 var currentBlock = controlBlocks[currentBlockIndex].GetComponent<ControlBlock>();
                 currentBlock.ActivateIndicator();
                 activateSound.Play();
+                activeIndicator.SetActive(true);
+
 
             }
         }
@@ -63,6 +68,7 @@ namespace AGDDPlatformer
                     isActivated = false;
                     DeactivateCurrentControlBlock();
                     activateSound.Play();
+                    activeIndicator.SetActive(false);
                 }
             }
         }

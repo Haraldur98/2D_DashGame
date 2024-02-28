@@ -32,7 +32,7 @@ namespace AGDDPlatformer
             PlayerController playerController = other.GetComponentInParent<PlayerController>();
             if (playerController != null)
             {
-                playerController.SetFlyActive();
+                // playerController.s();
                 isActive = false;
                 lastCollected = Time.time;
                 activeIndicator.SetActive(false);
