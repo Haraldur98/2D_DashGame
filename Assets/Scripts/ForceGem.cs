@@ -33,6 +33,7 @@ namespace AGDDPlatformer
             if (playerController != null)
             {
                 playerController.SetForceActive();
+                playerController.ResetDash();
                 isActive = false;
                 lastCollected = Time.time;
                 activeIndicator.SetActive(false);

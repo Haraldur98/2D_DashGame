@@ -27,8 +27,6 @@ namespace AGDDPlatformer
 
         void OnCollisionEnter2D(Collision2D col)
         { 
-            Debug.Log("Collision detected");
-            Debug.Log(col.gameObject.tag);
             if (col.gameObject.tag == "Player1")
             {   
                 // Check the player's properties
@@ -37,8 +35,21 @@ namespace AGDDPlatformer
                     Debug.Log("Player collided with explodable object");
                     player1.source.PlayOneShot(player1.brakeSound);
                     _explodable.explode();
-                    ExplosionForce ef = GameObject.FindObjectOfType<ExplosionForce>();
-                    ef.doExplosion(transform.position);
+
+                }
+            }
+        }
+
+         void OnCollisionStay2D(Collision2D col)
+        { 
+            if (col.gameObject.tag == "Player1")
+            {   
+                // Check the player's properties
+                if (player1.ForceActive == true && player1.isDashing == true)
+                {
+                    Debug.Log("Player collided with explodable object");
+                    player1.source.PlayOneShot(player1.brakeSound);
+                    _explodable.explode();
 
                 }
             }

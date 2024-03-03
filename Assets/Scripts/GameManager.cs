@@ -12,7 +12,7 @@ namespace AGDDPlatformer
         [Header("Players")]
         public PlayerController[] players;
 
-        [Header("Level")]
+        [Header("Level overview")]
         public PlayerGoal[] playerGoals;
         public bool timeStopped;
         public bool isGameComplete;

@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 979413819608945425}
   - component: {fileID: 6748337634751641588}
   m_Layer: 8
-  m_Name: Player 28
+  m_Name: Player 28.2
   m_TagString: Player1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,15 +141,15 @@ MonoBehaviour:
   dashSpeed: 40
   dashTime: 0.04
   dashCooldown: 0.2
+  isDashing: 0
   canDashColor: {r: 0.20220721, g: 0.6037736, b: 0.25083956, a: 1}
   cantDashColor: {r: 1, g: 1, b: 1, a: 1}
-  FlyColour: {r: 1, g: 0.83165157, b: 0, a: 1}
   ForceColor: {r: 0.9433962, g: 0.008899986, b: 0.008899986, a: 1}
   ControlColor: {r: 0.02832079, g: 0, b: 1, a: 1}
-  isDashing: 0
+  StunColor: {r: 0.4716981, g: 0.4004984, b: 0.4004984, a: 1}
   ForceActive: 0
-  FlyActive: 0
   Contolling: 0
+  isStuned: 0
   source: {fileID: 6748337634751641588}
   jumpSound: {fileID: 8300000, guid: 8b772f38bed9f394db4026482c2fb8e4, type: 3}
   dashSound: {fileID: 8300000, guid: 508c4d19d632cfd419d8e9a97ae00cac, type: 3}

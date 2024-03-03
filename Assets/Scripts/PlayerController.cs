@@ -11,26 +11,29 @@ namespace AGDDPlatformer
         public float jumpDeceleration = 0.5f; // Upwards slow after releasing jump button
         public float cayoteTime = 0.1f; // Lets player jump just after leaving ground
         public float jumpBufferTime = 0.1f; // Lets the player input a jump just before becoming grounded
-
+        private float knockbackEndTime = 0;
+        
         [Header("Dash")]
         public float dashSpeed;
         public float dashTime;
         public float dashCooldown;
+        bool canDash;
+        public bool isDashing;
+        bool wantsToDash;
+        Vector2 dashDirection;
+        float lastDashTime;
+
+        [Header("Colors")]
         public Color canDashColor;
         public Color cantDashColor;
-        public Color FlyColour;
         public Color ForceColor;
         public Color ControlColor;
-        float lastDashTime;
-        Vector2 dashDirection;
-        public bool isDashing;
-        bool canDash;
-        bool wantsToDash;
+        public Color StunColor;
 
-        [Header("Abilities")]
+        [Header("States")]
         public bool ForceActive;
-        public bool FlyActive;
         public bool Contolling; 
+        public bool isStuned;
 
         [Header("Audio")]
         public AudioSource source;
@@ -46,6 +49,7 @@ namespace AGDDPlatformer
         bool canJump;
         bool jumpReleased;
         Vector2 move;
+        Vector2 desiredDashDirection;
         float defaultGravityModifier;
 
         SpriteRenderer spriteRenderer;
@@ -70,8 +74,22 @@ namespace AGDDPlatformer
             isFrozen = GameManager.instance.timeStopped;
 
             /* --- Read Input --- */
+            ReadInput();
+            /* --- Compute Velocity --- */
+            if (knockbackEndTime < Time.time)
+            {   
+                isStuned = false;
+                ComputeVelocity();
+            }
+            /* --- Adjust Sprite --- */
+            AdjustSprite();
+            // Assume the sprite is facing right, flip it if moving left
+           
+        }
 
-            move.x = Input.GetAxisRaw("Horizontal");
+        private void ReadInput()
+        {
+             move.x = Input.GetAxisRaw("Horizontal");
             if (gravityModifier < 0)
             {
                 move.x *= -1;
@@ -91,7 +109,7 @@ namespace AGDDPlatformer
             }
 
             // Clamp directional input to 8 directions for dash
-            Vector2 desiredDashDirection = new Vector2(
+            desiredDashDirection = new Vector2(
                 move.x == 0 ? 0 : (move.x > 0 ? 1 : -1),
                 move.y == 0 ? 0 : (move.y > 0 ? 1 : -1));
             
@@ -106,9 +124,10 @@ namespace AGDDPlatformer
             {
                 wantsToDash = true;
             }
+        }
 
-            /* --- Compute Velocity --- */
-
+        private void ComputeVelocity()
+        {
             if (canDash && wantsToDash && !Contolling)
             {
                 isDashing = true;
@@ -116,12 +135,6 @@ namespace AGDDPlatformer
                 lastDashTime = Time.time;
                 canDash = false;
                 gravityModifier = 0;
-
-                if (FlyActive)
-                {
-                    canDash = true;
-                }
-
                 source.PlayOneShot(dashSound);
             }
             wantsToDash = false;
@@ -138,7 +151,7 @@ namespace AGDDPlatformer
                     gravityModifier = defaultGravityModifier;
                     if ((gravityModifier >= 0 && velocity.y > 0) ||
                         (gravityModifier < 0 && velocity.y < 0))
-                    {
+                    {   
                         velocity.y *= jumpDeceleration;
                     }
                 }
@@ -171,7 +184,8 @@ namespace AGDDPlatformer
                     // Decelerate upwards velocity when jump button is released
                     if ((gravityModifier >= 0 && velocity.y > 0) ||
                         (gravityModifier < 0 && velocity.y < 0))
-                    {
+                    {   
+                        // if the player is being knocked back, don't decelerate
                         velocity.y *= jumpDeceleration;
                     }
                     jumpReleased = false;
@@ -192,11 +206,10 @@ namespace AGDDPlatformer
                     jumpBoost -= jumpBoost * Mathf.Min(1f, Time.deltaTime);
                 }
             }
-
-            /* --- Adjust Sprite --- */
-
-            // Assume the sprite is facing right, flip it if moving left
-            if (move.x > 0.01f)
+        }
+        private void AdjustSprite()
+        {
+             if (move.x > 0.01f)
             {
                 spriteRenderer.flipX = false;
             }
@@ -209,13 +222,13 @@ namespace AGDDPlatformer
             {
                 spriteRenderer.color = ControlColor;
             }
+            else if (isStuned)
+            {
+                spriteRenderer.color = StunColor;
+            }
             else if (ForceActive)
             {
                 spriteRenderer.color = canDash ? ForceColor : cantDashColor;
-            }
-            else if (FlyActive)
-            {
-                spriteRenderer.color = canDash ? FlyColour : cantDashColor;
             }
             else
             {
@@ -243,22 +256,25 @@ namespace AGDDPlatformer
             ForceActive = true;
         }
 
-        public void SetFlyActive()
-        {
-            FlyActive = true;
-            StartCoroutine(DisableFlyAfterSeconds(3));
-        }
-
         public void toggleControl()
         {
             Contolling = !Contolling;
         }
 
-        private IEnumerator DisableFlyAfterSeconds(float seconds)
-        {
-            yield return new WaitForSeconds(seconds);
-            FlyActive = false;
+         public void Knockback(Vector2 direction, float force)
+        {   
+            Debug.Log("Knockback");
+            // Normalize the direction vector
+            direction = direction.normalized;
+
+            // Apply the force in the given direction
+            velocity = direction * force;
+
+            // Set the end time of the knockback effect
+            knockbackEndTime = Time.time + 0.5f; // 0.5 seconds duration
+            isStuned = true;
         }
+
 
         //Add a short mid-air boost to the player (unrelated to dash). Will be reset upon landing.
         public void SetJumpBoost(Vector2 jumpBoost)
