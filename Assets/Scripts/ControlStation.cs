@@ -85,9 +85,9 @@ namespace AGDDPlatformer
 
         private void MoveCurrentControlBlock()
         {
-            var currentBlockTransform = controlBlocks[currentBlockIndex];
-            var moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
-            currentBlockTransform.position += moveDirection * moveSpeed * Time.deltaTime;
+            var currentBlockRigidbody = controlBlocks[currentBlockIndex].GetComponent<Rigidbody2D>();
+            var moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            currentBlockRigidbody.velocity = moveDirection * moveSpeed;
         }
 
         private void DeactivateCurrentControlBlock()
