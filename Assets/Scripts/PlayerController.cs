@@ -279,7 +279,7 @@ namespace AGDDPlatformer
 
         private void CheckifDead()
         {
-            if (transform.position.y < -6)
+            if (transform.position.y < -10)
             {
                 GameManager.instance.ResetLevel();
             }
