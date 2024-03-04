@@ -83,6 +83,8 @@ namespace AGDDPlatformer
             }
             /* --- Adjust Sprite --- */
             AdjustSprite();
+            /* --- Check if Dead --- */
+            CheckifDead();
             // Assume the sprite is facing right, flip it if moving left
            
         }
@@ -273,6 +275,14 @@ namespace AGDDPlatformer
             // Set the end time of the knockback effect
             knockbackEndTime = Time.time + 0.5f; // 0.5 seconds duration
             isStuned = true;
+        }
+
+        private void CheckifDead()
+        {
+            if (transform.position.y < -6)
+            {
+                GameManager.instance.ResetLevel();
+            }
         }
 
 
